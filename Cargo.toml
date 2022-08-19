@@ -1,6 +1,6 @@
 [package]
 name = "version_info"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 description = "Reads version information for a specified file using WinAPI"
 readme = "README.md"
