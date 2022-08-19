@@ -16,7 +16,7 @@
 //! println!("mylib.dll's version is {}.{}.{}.{}", a1, a2, a3, a4);
 //! ```
 //!
-//! This function returns None if the file does not have the version information or if the version information is invalid.
+//! This function returns `None` if the file does not have the version information or if the version information is invalid.
 pub fn get_file_version(file_name: &str) -> Option<(u32, u32, u32, u32)> {
     use winapi::um::winver::{GetFileVersionInfoA, GetFileVersionInfoSizeA, VerQueryValueA};
 
