@@ -17,8 +17,12 @@ version_info = "*"
 ## Example
 
 ```rust
-let (a1, a2, a3, a4) = get_file_version("mylib.dll")?;
+let (a1, a2, a3, a4) = version_info::get_file_version("mylib.dll")?;
 println!("mylib.dll's version is {}.{}.{}.{}", a1, a2, a3, a4);
 ```
 
 This function returns `None` if the file does not have the version information or if the version information is invalid.
+
+## License
+
+MIT License
