@@ -1,0 +1,15 @@
+[package]
+name = "version_info"
+version = "0.0.1"
+edition = "2021"
+description = "Reads version information for a specified file using WinAPI"
+license = "MIT"
+repository = "https://github.com/x87/version_info_rs"
+authors = ["Seemann <mail@sannybuilder.com>"]
+keywords = ["version", "info", "file", "winapi", "windows"]
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+winapi = { version = "0.3", features = ["winver"] }
