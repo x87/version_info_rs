@@ -1,6 +1,6 @@
 [package]
 name = "version_info"
-version = "0.0.4"
+version = "0.0.5"
 edition = "2021"
 description = "Reads version information for a specified file using WinAPI"
 readme = "README.md"
@@ -14,3 +14,6 @@ path = "lib.rs"
 
 [dependencies]
 winapi = { version = "0.3", features = ["winver"] }
+
+[package.metadata.docs.rs]
+default-target = "i686-pc-windows-msvc"
