@@ -1,7 +1,7 @@
 /// Returns a file version composed of four numbers if the given file has the version information.
-/// 
+///
 /// Returns `None` if the file does not have the version information or if the version information is invalid.
-/// 
+///
 /// ## Example
 ///
 /// ```rust
@@ -9,7 +9,7 @@
 /// println!("mylib.dll's version is {}.{}.{}.{}", a1, a2, a3, a4);
 /// ```
 pub fn get_file_version(file_name: &str) -> Option<(u32, u32, u32, u32)> {
-    use winapi::um::winver::{GetFileVersionInfoA, GetFileVersionInfoSizeA, VerQueryValueA};
+    use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
     #[allow(non_snake_case)]
     #[repr(C)]
@@ -30,13 +30,10 @@ pub fn get_file_version(file_name: &str) -> Option<(u32, u32, u32, u32)> {
     }
 
     unsafe {
-        let filename = match std::ffi::CString::new(file_name) {
-            Ok(s) => s,
-            Err(_) => return None,
-        };
+        let filename = to_wide(file_name);
 
         let mut handle = 0;
-        let size = GetFileVersionInfoSizeA(filename.as_ptr(), &mut handle);
+        let size = GetFileVersionInfoSizeW(filename.as_ptr(), &mut handle);
 
         if size == 0 {
             return None;
@@ -45,18 +42,16 @@ pub fn get_file_version(file_name: &str) -> Option<(u32, u32, u32, u32)> {
         let mut buf = vec![0u8; size as usize];
         let pbuf = buf.as_mut_ptr() as *mut _;
 
-        if GetFileVersionInfoA(filename.as_ptr(), 0, size, pbuf) == 0 {
+        if GetFileVersionInfoW(filename.as_ptr(), 0, size, pbuf) == 0 {
             return None;
         }
 
         let mut pinfo: winapi::um::winnt::PVOID = std::ptr::null_mut();
         let mut length = 0;
-        let path = match std::ffi::CString::new("\\") {
-            Ok(s) => s,
-            Err(_) => return None,
-        };
 
-        if VerQueryValueA(pbuf, path.as_ptr(), &mut pinfo, &mut length) == 0 {
+        let path: Vec<u16> = to_wide("\\");
+
+        if VerQueryValueW(pbuf, path.as_ptr(), &mut pinfo, &mut length) == 0 {
             return None;
         }
 
@@ -68,4 +63,10 @@ pub fn get_file_version(file_name: &str) -> Option<(u32, u32, u32, u32)> {
         let v4 = info.dwFileVersionLS >> 0 & 0xFFFF;
         return Some((v1, v2, v3, v4));
     }
+}
+
+fn to_wide(s: &str) -> Vec<u16> {
+    use std::{ffi::OsStr, iter::once, os::windows::prelude::OsStrExt};
+
+    OsStr::new(s).encode_wide().chain(once(0)).collect()
 }
